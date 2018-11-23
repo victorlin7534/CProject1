@@ -1,21 +1,18 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <limits.h>
+#include "cmd.h"
 
 int main(){
-  char *in = malloc(200);
-  while(1){
-    fgets(in,200,stdin);
-    in [strlen(in )-1]=0;
-    parse_args();
-  }
+    while (1) {
+        printf("%s Sajictor Shell~$ ", call_getcwd());
+        char str[100];
+        fgets(str, 100, stdin);
+        strtok(str, "\n");
+        feed(str);
+    }
+    return 0;
 }
-
-
-char ** parse_args( char * line ){
-  char **container = malloc(64);
-  char *mark = line;
-  int x=0;
-  while(container[x] =  strsep(&mark," "))
-    x++;
-  return container;
-} 
