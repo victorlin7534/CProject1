@@ -26,6 +26,13 @@ char ** parse( char * in, char * del){
   return arr;
 }
 
+int first_nondel_index(char ** str){
+  for(int i=0;str;i++){
+    if(strlen(str[i])>0)
+      return i;
+  }
+}
+
 void execute (char * str) {
   char ** arguments = NULL;
   arguments = parse(str," ");
@@ -41,7 +48,8 @@ void execute (char * str) {
     return; 
   }
   if (!fork()){ 
-      execvp(arguments[0], arguments);
+      int p = first_nondel_index(arguments);
+      execvp(arguments[p], arguments+p);
       exit(1);
   } else {
     int status;
