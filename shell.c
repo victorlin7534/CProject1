@@ -2,13 +2,13 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/wait.h>
-#include <limits.h>
+#include <signal.h> 
 #include "cmd.h"
 
 int main(){
+  signal(SIGINT, sigintHandler); 
     while (1) {
-        printf("%s Sajictor Shell~$ ", call_getcwd());
+        printSajictorPrompt();
         char str[100];
         fgets(str, 100, stdin);
         strtok(str, "\n");

@@ -4,7 +4,19 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <limits.h>
+#include <signal.h> 
 #include "cmd.h"
+
+void printSajictorPrompt () {
+  printf("%s Sajictor Shell~$ ", call_getcwd());
+}
+
+void sigintHandler(int sig_num) { 
+    signal(SIGINT, sigintHandler); 
+    printf("\nTo exit the Sajictor Shell, type 'exit'\n"); 
+    printSajictorPrompt();
+    fflush(stdout); 
+} 
 
 char * call_getcwd (){
     char * cwd;
@@ -34,7 +46,7 @@ int first_nondel_index(char ** str){
 }
 
 void execute (char * str) {
-  char ** arguments = NULL;
+  char ** arguments = calloc(strlen(str),1);
   arguments = parse(str," ");
   if (!strcmp(arguments[0], "exit")) {
     exit(0);
