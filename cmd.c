@@ -50,7 +50,6 @@ void execute (char * str) {
   if (!strcmp(arguments[0], "cd")) {
     if(!arguments[1]){
       struct passwd *pwd = getpwuid(getuid());
-      printf("%s\n%s\n",getcwd(0,0),pwd->pw_dir);//HALP
       while(strcmp(pwd->pw_dir,getcwd(0,0))) chdir("..");
       return;
     }
