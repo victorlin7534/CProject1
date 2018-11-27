@@ -4,6 +4,8 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <limits.h>
+#include <pwd.h>
+#include <sys/types.h>
 #include <signal.h> 
 #include "cmd.h"
 
@@ -46,7 +48,12 @@ void execute (char * str) {
   char loc[100];
   if (!strcmp(arguments[0], "exit")) exit(0);
   if (!strcmp(arguments[0], "cd")) {
-    if(!strlen(arguments[1])||!arguments[1]) strcpy(str,"/");
+    if(!arguments[1]){
+      struct passwd *pwd = getpwuid(getuid());
+      printf("%s\n%s\n",getcwd(0,0),pwd->pw_dir);//HALP
+      while(strcmp(pwd->pw_dir,getcwd(0,0))) chdir("..");
+      return;
+    }
     else strcpy(loc, arguments[1]);
     if(chdir(loc)) printf("path does not exist\n");
     return; 
