@@ -7,9 +7,7 @@
 #include <signal.h> 
 #include "cmd.h"
 
-void printSajictorPrompt () {
-  printf("%s Sajictor Shell~$ ", call_getcwd());
-}
+void printSajictorPrompt () {printf("%s Sajictor Shell~$ ", call_getcwd());}
 
 void sigintHandler(int sig_num) { 
     signal(SIGINT, sigintHandler); 
@@ -19,44 +17,38 @@ void sigintHandler(int sig_num) {
 } 
 
 char * call_getcwd (){
-    char * cwd;
-    cwd = getcwd (0, 0);
-    if (! cwd) {
-        return "";
-    }
-    else {
-      return cwd;
-      free (cwd);
-    }
+    char * cwd = getcwd (0,0);
+    if(!cwd)return "";
+    else return cwd;
 }
 
 char ** parse( char * in, char * del){
-  char *cpy = calloc(strlen(in),sizeof(in));
-  strcpy(cpy,in);
+  char *temp = calloc(strlen(in),sizeof(in));
+  strcpy(temp,in);
   char **arr = calloc(6,sizeof(char *));
-  for(int i=0;cpy;++i)arr[i]=strsep(&cpy,del);
+  for(int i=0;temp;){
+    char* a = strsep(&temp,del);
+    if(strcmp(a," ")&&strcmp(a,"")){
+      arr[i]=a;
+      i++;
+    }
+  }
   return arr;
 }
 
 int first_nondel_index(char ** str){
-  for(int i=0;str;i++){
-    if(strlen(str[i])>0)
-      return i;
-  }
+  for(int i=0;str;i++)
+    if(strlen(str[i])>0) return i;
 }
 
 void execute (char * str) {
-  char ** arguments = calloc(strlen(str),1);
-  arguments = parse(str," ");
-  if (!strcmp(arguments[0], "exit")) {
-    exit(0);
-  }
+  char ** arguments = parse(str," ");
+  char loc[100];
+  if (!strcmp(arguments[0], "exit")) exit(0);
   if (!strcmp(arguments[0], "cd")) {
-    char str[200];
-    strcpy(str, call_getcwd());
-    strcpy(str, arguments[1]);
-    if(chdir(str))
-      printf("path does not exist\n");
+    if(!strlen(arguments[1])||!arguments[1]) strcpy(str,"/");
+    else strcpy(loc, arguments[1]);
+    if(chdir(loc)) printf("path does not exist\n");
     return; 
   }
   if (!fork()){ 
@@ -72,8 +64,7 @@ void execute (char * str) {
 void feed(char * in){
   char ** args = parse(in,";");
   for(int i=0;args;i++){
-    if(args[i]==NULL)
-      return;
+    if(args[i]==NULL) return;
     execute(args[i]);
   }
 }
