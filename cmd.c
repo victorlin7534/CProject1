@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include <limits.h>
 #include <pwd.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <signal.h> 
 #include "cmd.h"
@@ -61,10 +62,45 @@ void execute (char * str) {
   }
 }
 
+int has_out(char * line){ return strchr(line, '>')!=NULL;}
+
+int has_in (char * line){ return strchr(line, '<')!=NULL;}
+
+int has_pipe (char * line){ return strchr(line, '|')!=NULL;}
+
+void exepipe(char * line){
+  char ** tokens = parse(line,"| ");
+}
+
+void exeout (char * line) {
+  char ** tokens = parse(line,"> ");
+  int out = open(tokens[1], O_RDWR|O_CREAT|O_APPEND, 0600);
+  int save_out = dup(fileno(stdout));
+  dup2(out, fileno(stdout));
+  execute(tokens[0]);
+  fflush(stdout);
+  fflush(stderr);
+  dup2(save_out, fileno(stdout));
+  close(save_out);
+}
+
+void exein (char * line) {
+/*  char ** tokens = parse(line,"< ");
+  int out = open(tokens[1], O_RDONLY);
+  char input[100];
+  read(out,input,100);
+  char * temp = strcat(tokens[0],input);
+  execute(temp);
+  close(out);*/
+}
+
 void feed(char * in){
   char ** args = parse(in,";");
   for(int i=0;args;i++){
     if(args[i]==NULL) return;
-    execute(args[i]);
+    if (has_out(args[i])) exeout(args[i]);
+    else if (has_in(args[i])) exein(args[i]);
+    else if (has_pipe(args[i])) exepipe(args[i]);
+    else execute(args[i]);
   }
 }
