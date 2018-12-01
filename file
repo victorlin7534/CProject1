@@ -1,0 +1,10 @@
+cmd.c
+cmd.h
+cmd.o
+file
+makefile
+README.md
+shell.c
+shell.o
+test.exe
+test.exe.stackdump

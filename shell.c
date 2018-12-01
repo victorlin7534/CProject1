@@ -1,12 +1,10 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
 #include <string.h>
+#include <stdio.h>
 #include <signal.h> 
 #include "cmd.h"
 
 int main(){
-  signal(SIGINT, sigintHandler); 
+  	signal(SIGINT, sigintHandler); 
     while (1) {
         printSajictorPrompt();
         char str[100];
