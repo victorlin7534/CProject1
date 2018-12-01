@@ -69,12 +69,25 @@ int has_in (char * line){ return strchr(line, '<')!=NULL;}
 int has_pipe (char * line){ return strchr(line, '|')!=NULL;}
 
 void exepipe(char * line){
-  char ** tokens = parse(line,"| ");
+/*  char ** tokens = parse(line,"|");
+  int fds[2];
+  pipe(fds);
+  char input[100];
+  int f = fork();
+  if(f){
+    close(fds[1]);
+    execute(tokens[0]);
+    read(fds[0],input,sizeof(input));
+  }
+  else{
+    close(fds[0]);
+    write(fds[1],);
+  }*/
 }
 
 void exeout (char * line) {
-  char ** tokens = parse(line,"> ");
-  int out = open(tokens[1], O_RDWR|O_CREAT|O_APPEND, 0600);
+  char ** tokens = parse(line,">");
+  int out = open(parse(tokens[1]," ")[0], O_RDWR|O_CREAT|O_APPEND, 0600);
   int save_out = dup(fileno(stdout));
   dup2(out, fileno(stdout));
   execute(tokens[0]);
@@ -85,13 +98,15 @@ void exeout (char * line) {
 }
 
 void exein (char * line) {
-/*  char ** tokens = parse(line,"< ");
-  int out = open(tokens[1], O_RDONLY);
-  char input[100];
-  read(out,input,100);
-  char * temp = strcat(tokens[0],input);
-  execute(temp);
-  close(out);*/
+  char ** tokens = parse(line,"<");
+  int in = open(parse(tokens[1]," ")[0], O_RDWR|O_CREAT|O_APPEND, 0600);
+  int save_in = dup(fileno(stdin));
+  dup2(in,fileno(stdin));
+  execute(tokens[0]);
+  fflush(stdin);
+  fflush(stderr);
+  dup2(save_in, fileno(stdin));
+  close(save_in);
 }
 
 void feed(char * in){
