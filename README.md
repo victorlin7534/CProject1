@@ -13,8 +13,8 @@
 - leaving an application will result in the prompt printing twice
 
 ## FUNCTION HEADERS
-//prints the basic bash prompt with current directory path
-//arguments: n/a
+prints the basic bash prompt with current directory path
+arguments: n/a
 //returns: n/a
 void printSajictorPrompt()
 
