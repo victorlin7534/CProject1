@@ -13,62 +13,61 @@
 - leaving an application will result in the prompt printing twice
 
 ## FUNCTION HEADERS
-prints the basic bash prompt with current directory path
-arguments: n/a
-//returns: n/a
-void printSajictorPrompt()
+#### 1) void printSajictorPrompt()
+	- prints the basic bash prompt with current directory path
+	- arguments: n/a
+	- returns: n/a
 
-//checks if redirecting out is in user input
-//arguments: char *line
-//returns:  0 or any # != 0 
-int has_out(char * line)
+#### 2) int has_out(char * line)
+	- checks if redirecting out is in user input
+	- arguments: char *line
+	- returns:  0 or any # != 0 
 
-//checks if redirecting in is in user input
-//arguments: char *line
-//returns:  0 or any # != 0
-int has_in (char * line)
+#### 3) int has_in (char * line)
+	- checks if redirecting in is in user input
+	- arguments: char *line
+	- returns:  0 or any # != 0
 
-//checks if piping is in user input
-//arguments: char *line
-//returns:  0 or any # != 0
-int has_pipe (char * line)
+#### 4) int has_pipe (char * line)
+	- checks if piping is in user input
+	- arguments: char *line
+	- returns:  0 or any # != 0
 
-//prevents user from ^C (CTRL-C); prints error message and requests proper exit
-//arguments: int sig_num
-//returns: n/a
-void sigintHandler(int sig_num)
+#### 5) void sigintHandler(int sig_num)
+	- prevents user from ^C (CTRL-C); prints error message and requests proper exit
+	- arguments: int sig_num
+	- returns: n/a
 
-//retrieves path of current working directory 
-//arguments: n/a
-//returns: char * path of current working directory
-char * call_getcwd ()
+#### 6) char * call_getcwd ()
+	- retrieves path of current working directory 
+	- arguments: n/a
+	- returns: char * path of current working directory
 
-//separates user input into parts in order to be executed
-//arguments: char * in, char * del
-//returns: pointer of char * of strings separated by del in in
-char ** parse( char * in, char * del)
+#### 7) char ** parse( char * in, char * del)
+	- separates user input into parts in order to be executed
+	- arguments: char * in, char * del
+	- returns: pointer of char * of strings separated by del in in
 
-//executes given a single bash command
-//arguments: char *str
-//returns: n/a
-void execute (char * str)
+#### 8) void execute (char * str)
+	- executes given a single bash command
+	- arguments: char *str
+	- returns: n/a
 
-//executes first command and redirects as input for second command
-//arguments: char *line
-//returns: n/a
-void exepipe(char * line)
+#### 9) void exepipe(char * line)
+	- executes first command and redirects as input for second command
+	- arguments: char *line
+	- returns: n/a
 
-//executes the redirecting out to specified file
-//arguments: char *line
-//returns: n/a
-void exeout (char * line)
+#### 10) void exeout (char * line)
+	- executes the redirecting out to specified file
+	- arguments: char *line
+	- returns: n/a
+#### 11) void exein (char * line) 
+	- executes the redirecting in from specified file
+	- arguments: char *line
+	- returns: n/a
 
-//executes the redirecting in from specified file
-//arguments: char *line
-//returns: n/a
-void exein (char * line) 
-
-//processes raw user input
-//arguments: char *in
-//returns: n/a
-void feed(char * in)
+#### 12) void feed(char * in)
+	- processes raw user input
+	- arguments: char *
+	- returns: n/a
