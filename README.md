@@ -1,4 +1,5 @@
 # SAJICTOR SHELL
+## Invented by Sajed Nahian & Victor Lin
 
 ## FEATURES
 - redirection(<, >)
