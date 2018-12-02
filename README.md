@@ -6,6 +6,7 @@
 - piping(|)
 - multiple same-line commands(;)
 - root directory shortcut(cd )
+- signal handling
 
 ## ATTEMPTED
 
