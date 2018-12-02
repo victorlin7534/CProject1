@@ -9,6 +9,7 @@
 - signal handling
 
 ## ATTEMPTED
+- [tab] autocomplete
 
 ## BUGS
 - if one presses [tab] out of habit or any non-alphanumeric/symbol key and deletes what is added on, the shell will be unable to process the input. (e.g. emacs sh[tab] -> emacs sh -> nothing happens)
