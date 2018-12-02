@@ -94,28 +94,26 @@ void execute (char * str) {
 //returns: n/a
 void exepipe(char * line){
   char ** tokens = parse(line,"|");
-  int fds[2],f;
-  int save_in = dup(fileno(stdin));
-  int save_out = dup(fileno(stdout));
+  int fds[2],f1,f2;
+  int save_in = dup(0);
+  int save_out = dup(1);
   pipe(fds);
-  if(!(f=fork())){
-    close(fds[0]);
-	dup2(fds[1], fileno(stdout));
+  if(!(f1=fork())){
+	dup2(fds[1], 1);
+	close(fds[0]);
 	char ** arguments = parse(tokens[0]," ");
 	execvp(arguments[0], arguments);
   }
-  else{
-  	dup2(save_out, fileno(stdout));
-	close(save_out);
-  	if(!(f=fork())){
-	    close(fds[1]);
-	    dup2(fds[0],fileno(stdin));
-	    char ** arguments = parse(tokens[1]," ");
-		execvp(arguments[0], arguments);
-	}
-	dup2(save_in, fileno(stdin));
-	close(save_in);
+  if(!(f2=fork())){
+	dup2(fds[0],0);
+	close(fds[1]);
+	char ** arguments = parse(tokens[1]," ");
+	execvp(arguments[0], arguments);
   }
+  close(fds[0]); close(fds[1]);
+  waitpid(f1,NULL,0); waitpid(f2,NULL,0);
+  dup2(save_out, 1); close(save_out);
+  dup2(save_in, 0); close(save_in);
 }
 
 //executes the redirecting out to specified file
@@ -124,10 +122,10 @@ void exepipe(char * line){
 void exeout (char * line) {
   char ** tokens = parse(line,">");
   int out = open(parse(tokens[1]," ")[0], O_RDWR|O_CREAT|O_APPEND, 0600);
-  int save_out = dup(fileno(stdout));
-  dup2(out, fileno(stdout));
+  int save_out = dup(1);
+  dup2(out, 1);
   execute(tokens[0]);
-  dup2(save_out, fileno(stdout));
+  dup2(save_out, 1);
   close(save_out);
 }
 
@@ -137,10 +135,10 @@ void exeout (char * line) {
 void exein (char * line) {
   char ** tokens = parse(line,"<");
   int in = open(parse(tokens[1]," ")[0], O_RDWR|O_CREAT|O_APPEND, 0600);
-  int save_in = dup(fileno(stdin));
-  dup2(in,fileno(stdin));
+  int save_in = dup(0);
+  dup2(in,0);
   execute(tokens[0]);
-  dup2(save_in, fileno(stdin));
+  dup2(save_in, 0);
   close(save_in);
 }
 
