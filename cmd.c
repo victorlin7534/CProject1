@@ -15,16 +15,6 @@
 //returns: n/a
 void printSajictorPrompt(){printf("%s Sajictor Shell~$ ",call_getcwd());}
 
-//checks if redirecting out is in user input
-//arguments: char *line
-//returns:  0 or any # != 0 
-int has_out(char * line){ return strchr(line, '>')!=NULL;}
-
-//checks if redirecting in is in user input
-//arguments: char *line
-//returns:  0 or any # != 0
-int has_in (char * line){ return strchr(line, '<')!=NULL;}
-
 //checks if piping is in user input
 //arguments: char *line
 //returns:  0 or any # != 0
@@ -116,30 +106,48 @@ void exepipe(char * line){
   dup2(save_in, 0); close(save_in);
 }
 
-//executes the redirecting out to specified file
+//checks if redirection is in user input
 //arguments: char *line
-//returns: n/a
-void exeout (char * line) {
-  char ** tokens = parse(line,">");
-  int out = open(parse(tokens[1]," ")[0], O_RDWR|O_CREAT|O_APPEND, 0600);
-  int save_out = dup(1);
-  dup2(out, 1);
-  execute(tokens[0]);
-  dup2(save_out, 1);
-  close(save_out);
+//returns:  0 or any # != 0
+int has_redir(char * line){return strchr(line, '>')!=NULL || strchr(line, '<')!=NULL;}
+
+//arguments: char *line
+//returns: array of ints indicating order of < or >
+int * redir_order(char * line){
+	int * arr = calloc(strlen(line),1);
+	char temp[strlen(line)];
+	strcpy(temp,line);
+	int j=0,i=0;
+	for(;i<strlen(line);i++){
+		if(temp[i]=='>'){arr[j] = 1;j++;}// < = 2
+		if(temp[i]=='<'){arr[j] = 2;j++;}// > = 1 
+	}
+	return arr;
 }
 
-//executes the redirecting in from specified file
+//executes redirection in both directions, however many times
 //arguments: char *line
 //returns: n/a
-void exein (char * line) {
-  char ** tokens = parse(line,"<");
-  int in = open(parse(tokens[1]," ")[0], O_RDWR|O_CREAT|O_APPEND, 0600);
-  int save_in = dup(0);
-  dup2(in,0);
-  execute(tokens[0]);
-  dup2(save_in, 0);
-  close(save_in);
+void symexe(char * line){
+	int * or = redir_order(line);
+	char ** args = parse(line,"<>");
+	int save_in = dup(0);
+	int save_out = dup(1);
+	for(int i=0;or[i]==1||or[i]==2;i++){
+		int file = open(parse(args[i+1]," ")[0], O_RDWR|O_CREAT|O_APPEND, 0600);
+		if(or[i]==1){// redirect out >
+			dup2(file,1);
+			execute(args[i]);
+		}
+		else if(or[i]==2){// redirect in <
+			dup2(file,0);
+			execute(args[i]);
+		}
+		dup2(save_out, 1);
+		dup2(save_in, 0);
+	}
+	close(save_in);
+	close(save_out);
 }
 
 //processes raw user input
@@ -149,8 +157,7 @@ void feed(char * in){
   char ** args = parse(in,";");//handles separate commands
   for(int i=0;args;i++){
     if(args[i]==NULL) return;
-    if (has_out(args[i])) exeout(args[i]);//refirect out >
-    else if (has_in(args[i])) exein(args[i]);//redirect in <
+    else if(has_redir(args[i])) symexe(args[i]);// redirection <>
     else if (has_pipe(args[i])) exepipe(args[i]);//piping |
     else execute(args[i]);//normal
   }
