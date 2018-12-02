@@ -12,6 +12,7 @@
 ## BUGS
 - if one presses [tab] out of habit or any non-alphanumeric/symbol key and deletes what is added on, the shell will be unable to process the input. (e.g. emacs sh[tab] -> emacs sh -> nothing happens)
 - leaving an application will result in the prompt printing twice
+- running tr a-z A-Z < wholist > foo via makefile creates a foo file with normal text; however, when done manually, the file is in binary. (this is the case for ls > wholist)
 
 ## FUNCTION HEADERS
 #### 1) void printSajictorPrompt()

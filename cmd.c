@@ -133,14 +133,24 @@ void symexe(char * line){
 	char ** args = parse(line,"<>");
 	int save_in = dup(0);
 	int save_out = dup(1);
+	int old = open(parse(args[1]," ")[0], O_RDWR|O_CREAT, 0600);
 	for(int i=0;or[i]==1||or[i]==2;i++){
-		int file = open(parse(args[i+1]," ")[0], O_RDWR|O_CREAT|O_APPEND, 0600);
+		int cur = open(parse(args[i+1]," ")[0], O_RDWR|O_CREAT, 0600);
 		if(or[i]==1){// redirect out >
-			dup2(file,1);
-			execute(args[i]);
+			if(i>0){// very few or no cases of redirecting out on second redirect
+				char input[500];
+				read(old,input,500);
+				write(cur,input,500);	
+			}
+			if(or[i+1]==1||or[i+1]==2) dup2(old,0);//check if any more redirections
+			else{
+				dup2(cur,1);
+				execute(args[i]);
+			}			
 		}
 		else if(or[i]==2){// redirect in <
-			dup2(file,0);
+			dup2(cur,0);
+			if(or[i+1]==1||or[i+1]==2) dup2(old,1);
 			execute(args[i]);
 		}
 		dup2(save_out, 1);
